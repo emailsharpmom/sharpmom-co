@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharp Mom Co. | Mobile Knife Sharpening</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alatsi&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">
+                <img src="images/logo.png" alt="Sharp Mom Co. Logo" onerror="this.style.display='none'"> 
+                <span style="font-family:'Alatsi'; font-size:1.2rem; margin-left:10px;">Sharp Mom Co.</span>
+            </a>
+            <nav>
+                <div class="mobile-menu-btn"><i class="ph ph-list"></i></div>
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#how-it-works">Routes</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero -->
+        <section id="hero">
+            <div class="container">
+                <div class="hero-logo-wrapper">
+                    <img src="images/logo.png" alt="Sharp Mom Co. Logo">
+                </div>
+                <h1>Sharp Mom Co.</h1>
+                <div class="hero-sub">
+                    Proudly sharpening knives since 1991<br>
+                    <span>Route-Based Pickup ($35 min) • Sharpening at your Doorstep ($100 min)</span>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="document.getElementById('how-it-works').scrollIntoView()">Find My Route Day</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('doorstep-section').scrollIntoView()">Book House Call</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section id="services">
+            <div class="container">
+                <h2 class="section-title">What’s Included</h2>
+                <div class="services-grid"></div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section id="pricing">
+            <div class="container">
+                <h2 class="section-title">Simple Pricing</h2>
+                <div class="pricing-grid"></div>
+            </div>
+        </section>
+
+        <!-- How It Works / Routes -->
+        <section id="how-it-works">
+            <div class="container">
+                <h2 class="section-title">Two Ways to Sharpen</h2>
+                <div class="how-grid">
+                    
+                    <!-- METHOD 1: ROUTE BASED (ZIP LOOKUP) -->
+                    <div class="method-card">
+                        <h3><i class="ph ph-truck"></i> Route-Based Pickup & Drop-Off</h3>
+                        <p style="margin-bottom: 20px;">
+                            I pick up knives from your area one day and drop them off the next day.
+                        </p>
+                        
+                        <!-- ZIP SEARCH UI -->
+                        <div class="zip-search-box">
+                            <label for="zipInput" style="display:block; margin-bottom:8px; font-weight:600;">Enter your ZIP code to see when I’ll be in your area.</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="zipInput" placeholder="e.g. 95008" maxlength="5" class="zip-input">
+                                <button id="findDayBtn" class="btn btn-primary" style="padding: 10px 20px;">Find My Day</button>
+                            </div>
+                            <!-- RESULT AREA -->
+                            <div id="zipResult" class="zip-result" style="display:none;"></div>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+                        <p><strong>How it works:</strong></p>
+                        <ol class="step-list">
+                            <li>Check your date above.</li>
+                            <li><a href="#" class="text-link booking-trigger">Text us</a> to book your pickup for that day.</li>
+                            <li>I pick up your knives and tools from your home.</li>
+                            <li>I sharpen them off-site with care and precision.</li>
+                            <li>Your blades are returned the very next day, sharp and ready to use.</li>
+                        </ol>
+                        <p class="small-note"><strong>Minimum order for route service: $35</strong></p>
+                    </div>
+
+                    <!-- METHOD 2: DOORSTEP (HOUSE CALL) -->
+                    <div class="method-card" id="doorstep-section">
+                        <h3><i class="ph ph-house-line"></i> Sharpening at your Doorstep</h3>
+                        <p style="margin-bottom: 20px;">
+                            Premium house-call service. I come to you and sharpen on-site.
+                        </p>
+                        <ol class="step-list">
+                            <li><a href="#" id="doorstep-link" class="text-link">Text us</a> to request an appointment.</li>
+                            <li>On your appointment day, you can leave your knives or tools on the porch if you won’t be home.</li>
+                            <li>I arrive at the scheduled time and sharpen everything on-site, usually in under an hour.</li>
+                            <li>When I’m finished, you get beautifully sharp blades ready to use.</li>
+                            <li>Payment is quick and easy by cash/venmo/zelle or check.</li>
+                        </ol>
+                        <p class="small-note"><strong>Minimum for a housecall is $100.</strong></p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        
+        <!-- Results -->
+        <section id="results">
+            <div class="container">
+                <h2 class="section-title">Before & After Results</h2>
+                <div class="results-carousel"></div>
+                <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 10px;">
+                    (Hover to zoom details)
+                </p>
+            </div>
+        </section>
+
+        <!-- Client Love -->
+        <section id="reviews" style="background-color: #fafafa;">
+            <div class="container">
+                <h2 class="section-title">Client Love</h2>
+                <div class="reviews-wrapper">
+                    <div class="reviews-track"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About -->
+        <section id="about">
+            <div class="container">
+                <div class="about-grid">
+                    <img src="images/chaitra.jpg" alt="Chaitra at work" style="border-radius: 8px; width: 100%; height: auto; object-fit: cover;" onerror="this.style.display='none'">
+                    <div>
+                        <h2>Hi, I’m Chaitra.</h2>
+                        <p>Learned whetstone sharpening from my father before age 10. Trained with a professional in Canada, now bringing decades of skill to the Bay Area.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div style="margin-bottom: 20px;">
+                <img src="images/logo.png" alt="Sharp Mom Co. Logo" style="height: 60px; margin: 0 auto;">
+                <h3 style="margin-top: 10px;">Sharp Mom Co.</h3>
+            </div>
+            <p>Proudly sharpening knives since 1991</p>
+            <div class="footer-socials">
+                <a href="#" id="link-google" target="_blank" class="social-btn"><i class="ph ph-google-logo"></i> Google</a>
+                <a href="#" id="link-nextdoor" target="_blank" class="social-btn"><i class="ph ph-house"></i> Nextdoor</a>
+                <a href="#" id="link-instagram" target="_blank" class="social-btn"><i class="ph ph-instagram-logo"></i> Instagram</a>
+            </div>
+            <div class="copyright">
+                <p>© 2026 Sharp Mom Co. • Woman-owned</p>
+                <p>Santa Clara County & South Bay</p>
+                <p style="margin-top: 10px;"><a href="/privacy.txt" target="_blank" style="text-decoration: underline; color: var(--color-teal);">Privacy Policy & Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

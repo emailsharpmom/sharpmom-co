@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharp Mom Co. | Mobile Knife Sharpening</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alatsi&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">
+                <img src="images/logo.png" alt="Sharp Mom Co. Logo" onerror="this.style.display='none'"> 
+                <span style="font-family:'Alatsi'; font-size:1.2rem; margin-left:10px;">Sharp Mom Co.</span>
+            </a>
+            <nav>
+                <div class="mobile-menu-btn"><i class="ph ph-list"></i></div>
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#schedule">Schedule</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero -->
+        <section id="hero">
+            <div class="container">
+                <div class="hero-logo-wrapper">
+                    <img src="images/logo.png" alt="Sharp Mom Co. Logo">
+                </div>
+                <h1>Sharp Mom Co.</h1>
+                <div class="hero-sub">
+                    Proudly sharpening knives since 1991<br>
+                    <span>Farmers-market drop-off (no minimum) • Sharpening service at your doorstep ($100 min)</span>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="document.getElementById('schedule').scrollIntoView()">This week’s market schedule</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('how-it-works').scrollIntoView()">Book doorstep sharpening ($100 min)</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section id="services">
+            <div class="container">
+                <h2 class="section-title">What’s Included</h2>
+                <div class="services-grid"></div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section id="pricing">
+            <div class="container">
+                <h2 class="section-title">Simple Pricing</h2>
+                <div class="pricing-grid"></div>
+            </div>
+        </section>
+
+        <!-- How It Works (UPDATED LAYOUT) -->
+        <section id="how-it-works">
+            <div class="container">
+                <h2 class="section-title">Two Ways to Sharpen</h2>
+                <div class="how-grid">
+                    
+                    <!-- Market Column -->
+                    <div class="method-card">
+                        <h3><i class="ph ph-storefront"></i> Farmers Market Drop-Off</h3>
+                        <ol class="step-list">
+                            <li>Wrap your knives securely in a towel and bring them to the market.</li>
+                            <li>Drop them off at the Sharp Mom booth—quick and simple.</li>
+                            <li>Enjoy shopping the market while I sharpen your knives.</li>
+                            <li>I’ll text you as soon as your order is ready.</li>
+                            <li>Pick up your knives and pay by venmo/zelle/check/cash.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Doorstep Column -->
+                    <div class="method-card">
+                        <h3><i class="ph ph-house-line"></i> Sharpening service at your doorstep</h3>
+                        <ol class="step-list">
+                            <li><a href="#" id="doorstep-link" class="text-link">Text us</a> to request an appointment.</li>
+                            <li>On your appointment day, you can leave your knives or tools on the porch if you won’t be home.</li>
+                            <li>I arrive at the scheduled time and sharpen everything on-site, usually in under an hour.</li>
+                            <li>When I’m finished, you get beautifully sharp blades ready to use.</li>
+                            <li>Payment is quick and easy by cash/venmo/zelle or check.</li>
+                        </ol>
+                        <p class="small-note"><strong>Minimum for a housecall is $100.</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule -->
+        <section id="schedule">
+            <div class="container">
+                <h2 class="section-title">Where to Find Me</h2>
+                <div class="schedule-grid"></div>
+            </div>
+        </section>
+        
+        <!-- Results -->
+        <section id="results">
+            <div class="container">
+                <h2 class="section-title">Before & After Results</h2>
+                <div class="results-carousel"></div>
+                <p style="text-align: center; font-size: 0.9rem; color: #888; margin-top: 10px;">
+                    (Hover to zoom details)
+                </p>
+            </div>
+        </section>
+
+        <!-- Client Love -->
+        <section id="reviews" style="background-color: #fafafa;">
+            <div class="container">
+                <h2 class="section-title">Client Love</h2>
+                <div class="reviews-wrapper">
+                    <div class="reviews-track"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About -->
+        <section id="about">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-img-placeholder">
+                        <i class="ph ph-camera"></i>
+                        <span>Photo: Chaitra at Work</span>
+                    </div>
+                    <div>
+                        <h2>Hi, I’m Chaitra.</h2>
+                        <p>What began as a way to help my family after losing my father to cancer grew into a lifelong connection to the craft he taught me. I sharpened knives for neighbors throughout high school, carrying his lessons with me even as life pulled me toward engineering and grad school.<br>
+                        Years later, while living in Toronto, I had the chance to shadow a professional sharpener who introduced me to modern techniques and tools. His generosity and mentorship refined the traditional skills my father gave me and deepened my love for the craft.<br>
+                        I’m a mom of two, an engineer by training, and the hands behind Sharp Mom here in Santa Clara County. After returning to the Bay Area in 2024, I decided to bring my sharpening full circle and build a local, woman-owned business. If your knives are dull, I can fix that—quickly, carefully, and right at your doorstep or at the farmers market.
+</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div style="margin-bottom: 20px;">
+                <img src="images/logo.png" alt="Sharp Mom Co. Logo" style="height: 60px; margin: 0 auto;">
+                <h3 style="margin-top: 10px;">Sharp Mom Co.</h3>
+            </div>
+            
+            <p>Proudly sharpening knives since 1991</p>
+            
+            <!-- Social Footer Links -->
+            <div class="footer-socials">
+                <a href="#" id="link-google" target="_blank" class="social-btn">
+                    <i class="ph ph-google-logo"></i> Google
+                </a>
+                <a href="#" id="link-nextdoor" target="_blank" class="social-btn">
+                    <i class="ph ph-house"></i> Nextdoor
+                </a>
+                <a href="#" id="link-instagram" target="_blank" class="social-btn">
+                    <i class="ph ph-instagram-logo"></i> Instagram
+                </a>
+            </div>
+
+            <div class="copyright">
+                <p>© 2025 Sharp Mom Co. • Woman-owned</p>
+                <p>Santa Clara County & South Bay</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="marketModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="data.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
