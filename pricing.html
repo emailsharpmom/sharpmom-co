@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — Sharp Mom Co.</title>
+  <meta name="description" content="Full sharpening price sheet for residential and commercial clients. Kitchen knives, garden tools, salon shears, grooming shears, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="nav">
+  <div class="container nav__inner">
+    <a href="index.html" class="nav__logo"><img src="images/logo-round.png" alt="Sharp Mom Co." />Sharp Mom Co.</a>
+    <ul class="nav__links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="pricing.html" class="active">Pricing</a></li>
+      <li><a href="schedule.html">Schedule</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#gallery">Gallery</a></li>
+    </ul>
+    <a href="sms:+14083909940" class="nav__cta btn btn--dark">📱 Text to Book</a>
+    <div class="nav__hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── PAGE HERO ─── -->
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Transparent Pricing</span>
+    <h1>Blade Menu</h1>
+    <p style="max-width:560px;margin-top:14px;font-size:1.05rem;color:var(--ink-mid)">
+      No surprise fees. What you see below is what you pay — per blade, per tool.
+      Pay by <strong>cash, Venmo, or Zelle</strong> at time of service.
+    </p>
+  </div>
+</section>
+
+<!-- ─── PRICING CONTENT ─── -->
+<section class="section">
+  <div class="container">
+
+    <!-- Tabs -->
+    <div class="pricing-tabs" role="tablist">
+      <button class="pricing-tab active" onclick="showPanel('residential', this)" role="tab" aria-selected="true">🏠 Residential</button>
+      <button class="pricing-tab" onclick="showPanel('commercial', this)" role="tab" aria-selected="false">🏢 Commercial</button>
+    </div>
+
+    <!-- ─── RESIDENTIAL PANEL ─── -->
+    <div id="panel-residential" class="pricing-panel active">
+
+      <div class="pricing-note">
+        <strong>Minimum order $80</strong> for doorstep service. Only have a knife or two?
+        <a href="sms:+14083909940" style="color:var(--ink);font-weight:600">Text Chaitra</a>
+        to arrange a drop-off and she'll work it into her route.
+      </div>
+
+      <!-- Kitchen -->
+      <div class="pricing-table">
+        <div class="pricing-table__header" style="background:var(--teal);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <span style="font-size:1.4rem">🔪</span>
+          <div>
+            <div class="pricing-table__title">Kitchen</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Knives — straight-edge</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$13</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Knives — serrated</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$16</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Cleavers</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$16</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Scissors — kitchen / fabric / pinking</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$13</div>
+            <div class="pricing-row__unit">per pair</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Pocket knives</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$10</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Pizza cutters</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$8</div>
+            <div class="pricing-row__unit">per cutter</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Food processor blades</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$17</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Chopper / mini food processor blades</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$12</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Garden -->
+      <div class="pricing-table">
+        <div class="pricing-table__header" style="background:var(--orange-light);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <span style="font-size:1.4rem">🌿</span>
+          <div>
+            <div class="pricing-table__title">Garden Tools</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Pruning shears</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$12</div>
+            <div class="pricing-row__unit">per tool</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Hedge shears</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$16</div>
+            <div class="pricing-row__unit">per tool</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Hedge trimmers</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$25</div>
+            <div class="pricing-row__unit">per tool</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Machetes</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$20</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Axes / Hatchets</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$20</div>
+            <div class="pricing-row__unit">per tool</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Lawn mower blades</div>
+            <div class="pricing-row__note">Removal and re-installation included</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$20</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Repair -->
+      <div class="pricing-table">
+        <div class="pricing-table__header" style="background:var(--pink-light);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <span style="font-size:1.4rem">🔧</span>
+          <div>
+            <div class="pricing-table__title">Repair &amp; Restoration</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Chipped, bent, or damaged blades</div>
+            <div class="pricing-row__note">Text photos to 408-390-9940 for a custom quote before booking</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price" style="font-size:1rem">Quote</div>
+            <div class="pricing-row__unit">by photo</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end residential panel -->
+
+    <!-- ─── COMMERCIAL PANEL ─── -->
+    <div id="panel-commercial" class="pricing-panel">
+
+      <div class="pricing-note">
+        <strong>Commercial clients:</strong> Salon and grooming shear service is <strong>mobile only</strong> with
+        <strong>no minimum order</strong>. Commercial kitchen knife service follows the same
+        $80 minimum or drop-off arrangement as residential.
+        Pay by cash, Venmo, or Zelle.
+      </div>
+
+      <!-- Commercial Kitchen -->
+      <div class="pricing-table">
+        <div class="pricing-table__header" style="background:var(--teal);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <span style="font-size:1.4rem">🍽️</span>
+          <div>
+            <div class="pricing-table__title">Commercial Kitchen</div>
+            <div style="font-size:0.78rem;color:var(--ink-mid);margin-top:2px">Restaurants · Catering · Food service</div>
+          </div>
+          <span class="pricing-table__badge pricing-table__badge--commercial">Commercial</span>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Knives — straight-edge</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$7</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Knives — serrated</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$8</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Salon -->
+      <div class="pricing-table">
+        <div class="pricing-table__header" style="background:var(--orange-light);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <span style="font-size:1.4rem">💈</span>
+          <div>
+            <div class="pricing-table__title">Hair Salons</div>
+            <div style="font-size:0.78rem;color:var(--ink-mid);margin-top:2px">Mobile only · No minimum</div>
+          </div>
+          <span class="pricing-table__badge pricing-table__badge--commercial">Commercial</span>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Salon shears</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$35</div>
+            <div class="pricing-row__unit">per shear</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pet Grooming -->
+      <div class="pricing-table">
+        <div class="pricing-table__header" style="background:var(--pink-light);border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <span style="font-size:1.4rem">🐾</span>
+          <div>
+            <div class="pricing-table__title">Pet Grooming</div>
+            <div style="font-size:0.78rem;color:var(--ink-mid);margin-top:2px">Mobile only · No minimum</div>
+          </div>
+          <span class="pricing-table__badge pricing-table__badge--commercial">Commercial</span>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Pet grooming shears</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$25</div>
+            <div class="pricing-row__unit">per shear</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div><div class="pricing-row__name">Clipper blades</div></div>
+          <div style="text-align:right">
+            <div class="pricing-row__price">$8</div>
+            <div class="pricing-row__unit">per blade</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commercial repair -->
+      <div class="pricing-table">
+        <div class="pricing-table__header" style="background:var(--bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;border-bottom:1px solid var(--divider);">
+          <span style="font-size:1.4rem">🔧</span>
+          <div>
+            <div class="pricing-table__title">Repair &amp; Restoration</div>
+          </div>
+        </div>
+        <div class="pricing-row">
+          <div>
+            <div class="pricing-row__name">Damaged, chipped, or bent blades</div>
+            <div class="pricing-row__note">Text photos to 408-390-9940 for a quote</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pricing-row__price" style="font-size:1rem">Quote</div>
+            <div class="pricing-row__unit">by photo</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end commercial panel -->
+
+    <!-- Bottom CTA -->
+    <div style="text-align:center;margin-top:48px;padding-top:40px;border-top:1px solid var(--divider);">
+      <h3 style="margin-bottom:12px">Ready to book?</h3>
+      <p style="color:var(--ink-light);margin-bottom:24px">Text <strong>SHARPMOM</strong> to get started — we'll collect all the details.</p>
+      <a href="sms:+14083909940" class="btn btn--dark">📱 Text SHARPMOM to 408-390-9940</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <div class="footer__logo">Sharp Mom Co.</div>
+        <p>Woman-owned mobile knife &amp; tool sharpening. Proudly serving Santa Clara County.</p>
+        <p style="margin-top:12px">Pay by cash · Venmo · Zelle</p>
+      </div>
+      <div class="footer__col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="schedule.html">Schedule</a></li>
+          <li><a href="index.html#gallery">Gallery</a></li>
+          <li><a href="index.html#about">About</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms &amp; Conditions</a></li>
+        </ul>
+        <h4 style="margin-top:24px">Contact</h4>
+        <ul>
+          <li><a href="sms:+14083909940">Text: 408-390-9940</a></li>
+          <li><a href="tel:+14083909940">Call: 408-390-9940</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2025 Sharp Mom Co. · Woman-owned · Santa Clara County</span>
+      <span>
+        <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp;
+        <a href="terms.html">Terms &amp; Conditions</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+<script>
+  function showPanel(id, btn) {
+    document.querySelectorAll('.pricing-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.pricing-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+  }
+</script>
+</body>
+</html>
