@@ -429,7 +429,7 @@
 <section class="page-hero">
   <div class="container">
     <span class="eyebrow">Service Schedule</span>
-    <h1>When is Chaitra near you?</h1>
+    <h1>When is Sharp Mom near you?</h1>
     <p style="max-width:520px;margin-top:12px;font-size:1.05rem;color:var(--ink-mid)">
       Click any colored day to check availability and request a slot.
       Tools stay on your porch — no need to be home.
@@ -468,7 +468,7 @@
       <div class="notice__icon">💡</div>
       <div>
         Only have 1–2 items and don't meet the $80 minimum?
-        <a href="sms:+14083909940" style="color:var(--ink);font-weight:600">Text Chaitra</a>
+        <a href="sms:+14083909940" style="color:var(--ink);font-weight:600">Text Sharp Mom</a>
         to arrange a drop-off and she'll work it into her route.
         Salon &amp; grooming clients have no minimum.
       </div>
@@ -498,7 +498,7 @@
 
     <!-- Fully booked state (hidden by default) -->
     <div class="modal__full-msg" id="modal-full-msg" style="display:none">
-      😔 This day is fully booked. Text Chaitra to join the waitlist — cancellations do happen!
+      😔 This day is fully booked. Text Sharp Mom to join the waitlist — cancellations do happen!
     </div>
     <a href="sms:+14083909940" class="btn-waitlist" id="modal-waitlist-btn" style="display:none">
       📱 Join Waitlist via Text
@@ -566,7 +566,7 @@
       </button>
       <p class="modal-note">
         This opens your Messages app with everything pre-filled.
-        Hit Send — Chaitra will confirm your slot by text.
+        Hit Send — Sharp Mom will confirm your slot by text.
       </p>
     </div>
 
@@ -624,7 +624,7 @@
 // Step 1: Create a Google Sheet with columns: Date (A), Booked (B)
 // Step 2: Deploy Google Apps Script as web app (see sheets-setup.js)
 // Step 3: Paste your web app URL here:
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzjhMVJA1wmubVMzpDLHh0CetWbhzypMMRAbkorwKDnjVRiYIS0QpuoVXIYDR8PG34xhg/exec'; // e.g. 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
+const SHEETS_URL = ''; // e.g. 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
 
 const TOTAL_SLOTS = 5;
 const PHONE = '+14083909940';
@@ -845,7 +845,7 @@ function openModal(day, month, year, svc, dateStr, avail) {
   document.getElementById('modal-slot-text').textContent =
     isFull ? 'Fully booked' : `${avail} of ${TOTAL_SLOTS} slots available`;
   document.getElementById('modal-slot-sub').textContent =
-    isFull ? 'Text Chaitra to join the waitlist'
+    isFull ? 'Text Sharp Mom to join the waitlist'
            : `${booked} slot${booked !== 1 ? 's' : ''} already requested`;
 
   // Toggle form vs waitlist
