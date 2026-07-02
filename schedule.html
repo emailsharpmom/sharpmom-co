@@ -10,18 +10,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    /* ── Calendar ── */
-    .cal-wrap { margin-top: 32px; }
 
-    .month-nav {
+    /* ── Week navigator ── */
+    .week-nav {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
-    .month-nav h2 { margin: 0; font-size: 1.8rem; }
-    .month-btn {
-      width: 40px; height: 40px;
+    .week-nav h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ink);
+      flex: 1;
+    }
+    .week-btn {
+      width: 38px; height: 38px;
       border-radius: 50%;
       border: 2px solid var(--divider);
       background: var(--white);
@@ -32,135 +37,260 @@
       color: var(--ink);
       flex-shrink: 0;
     }
-    .month-btn:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
+    .week-btn:hover { border-color: var(--ink); background: var(--ink); color: var(--white); }
+    .week-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
 
-    .cal-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
-    }
-    .cal-hdr {
-      text-align: center;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-light);
-      padding: 10px 0;
-    }
-
-    /* Base cell */
-    .cal-cell {
-      border-radius: 12px;
-      padding: 10px 10px 8px;
-      min-height: 110px;
+    /* ── Week rows ── */
+    .week-grid {
       display: flex;
       flex-direction: column;
-      position: relative;
-      transition: transform 0.15s, box-shadow 0.15s;
+      gap: 8px;
     }
 
-    /* Empty padding cells */
-    .cal-cell--empty {
-      background: transparent;
-      min-height: 110px;
-    }
-
-    /* Non-service days — greyed, not clickable */
-    .cal-cell--nonservice {
-      background: var(--white);
-      border: 1px solid var(--divider);
-      opacity: 0.45;
-      cursor: default;
-    }
-
-    /* Service days — clickable */
-    .cal-cell--service {
+    .week-row {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      align-items: center;
+      gap: 0;
+      border-radius: 14px;
       border: 2px solid transparent;
+      padding: 16px 20px;
       cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      position: relative;
+      min-height: 72px;
     }
-    .cal-cell--service:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    .week-row:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.10);
     }
-    .cal-cell--service:active { transform: translateY(-1px); }
+    .week-row:active { transform: translateY(0); }
+    .week-row--today {
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.12);
+    }
+    .week-row--full { opacity: 0.7; }
 
-    /* Fully booked */
-    .cal-cell--full {
-      opacity: 0.6;
-      cursor: pointer; /* still clickable for waitlist */
+    /* Date column */
+    .week-row__date {
+      display: flex;
+      flex-direction: column;
     }
-
-    .cal-cell__num {
-      font-size: 0.85rem;
+    .week-row__dayname {
+      font-size: 0.72rem;
       font-weight: 700;
-      margin-bottom: 6px;
-      color: var(--ink-light);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-mid);
+      margin-bottom: 3px;
     }
-    .cal-cell--service .cal-cell__num { color: var(--ink); }
-    .cal-cell--today .cal-cell__num {
+    .week-row__daynum {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .week-row__month {
+      font-size: 0.72rem;
+      color: var(--ink-light);
+      margin-top: 2px;
+    }
+    .week-row--today .week-row__daynum {
       background: var(--ink);
       color: var(--white);
-      width: 24px; height: 24px;
+      width: 34px; height: 34px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.78rem;
+      font-size: 1.1rem;
     }
 
-    .cal-cell__city {
-      font-size: 0.68rem;
+    /* City column */
+    .week-row__city {
+      padding: 0 16px;
+    }
+    .week-row__city-name {
+      font-size: 0.95rem;
       font-weight: 600;
       color: var(--ink);
-      line-height: 1.35;
-      margin-bottom: auto;
+      line-height: 1.3;
+    }
+    .week-row__city-sub {
+      font-size: 0.75rem;
+      color: var(--ink-light);
+      margin-top: 2px;
     }
 
-    /* Slot dots */
-    .cal-cell__slots {
+    /* Slots column */
+    .week-row__slots {
       display: flex;
-      gap: 3px;
-      margin-top: 8px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .week-row__dots {
+      display: flex;
+      gap: 4px;
     }
     .slot-dot {
-      width: 8px; height: 8px;
+      width: 9px; height: 9px;
       border-radius: 50%;
       flex-shrink: 0;
     }
-    .slot-dot--available { /* colored by JS */ }
     .slot-dot--booked { background: #e0e0e0; }
-
-    .cal-cell__tag {
-      font-size: 0.6rem;
+    .slot-tag {
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-top: 6px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(0,0,0,0.08);
-      color: var(--ink-mid);
-      width: fit-content;
+      padding: 3px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
     }
-    .cal-cell__tag--full {
-      background: rgba(200,50,50,0.12);
+    .slot-tag--open {
+      background: rgba(0,0,0,0.07);
+      color: var(--ink-mid);
+    }
+    .slot-tag--full {
+      background: rgba(200,50,50,0.10);
       color: #b03030;
     }
 
-    /* Legend */
-    .legend {
+    /* Today badge */
+    .today-badge {
+      position: absolute;
+      top: 10px; right: 14px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: var(--ink);
+      color: var(--white);
+      padding: 2px 7px;
+      border-radius: 20px;
+    }
+
+    /* ── ZIP finder ── */
+    .zip-finder {
+      margin-top: 36px;
+      background: var(--white);
+      border: 1.5px solid var(--divider);
+      border-radius: 16px;
+      padding: 28px 28px 24px;
+    }
+    .zip-finder__title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .zip-finder__sub {
+      font-size: 0.85rem;
+      color: var(--ink-mid);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .zip-finder__row {
       display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .zip-input {
+      padding: 11px 16px;
+      border: 1.5px solid var(--divider);
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+      width: 140px;
+      transition: border-color 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .zip-input:focus { border-color: var(--ink); }
+    .zip-btn {
+      padding: 11px 20px;
+      background: var(--ink);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .zip-btn:hover { background: var(--ink-mid); }
+
+    .zip-result {
+      margin-top: 20px;
+      display: none;
+    }
+    .zip-result--show { display: block; }
+
+    /* Matched result card */
+    .zip-match {
+      background: #f0faf9;
+      border: 1.5px solid #abe4e3;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .zip-match__label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-light);
+      margin-bottom: 6px;
+    }
+    .zip-match__text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+    .zip-match__hint {
+      font-size: 0.8rem;
+      color: var(--ink-mid);
+      margin-top: 4px;
+    }
+
+    /* ZIP matched rows */
+    .zip-rows { display: flex; flex-direction: column; gap: 8px; }
+
+    /* No match CTA */
+    .zip-no-match {
+      background: #fff9f0;
+      border: 1.5px solid #f6c87a;
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
       flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 24px;
     }
-    .legend-item {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 0.82rem; font-weight: 500; color: var(--ink-mid);
+    .zip-no-match__text {
+      font-size: 0.9rem;
+      color: var(--ink);
+      line-height: 1.5;
     }
-    .legend-dot {
-      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    .zip-no-match__text strong { display: block; margin-bottom: 3px; }
+    .zip-no-match__btn {
+      padding: 10px 18px;
+      background: var(--ink);
+      color: var(--white);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.15s;
+      flex-shrink: 0;
     }
+    .zip-no-match__btn:hover { background: var(--ink-mid); }
 
     /* ── MODAL ── */
     .modal-overlay {
@@ -177,10 +307,7 @@
       visibility: hidden;
       transition: opacity 0.2s, visibility 0.2s;
     }
-    .modal-overlay.open {
-      opacity: 1;
-      visibility: visible;
-    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
     .modal {
       background: var(--white);
       border-radius: 20px;
@@ -219,38 +346,21 @@
       transition: background 0.15s;
     }
     .modal__close:hover { background: var(--divider); }
-
     .modal__date {
       font-family: var(--font-display);
       font-size: 1.3rem;
       font-weight: 700;
       margin-bottom: 2px;
+      margin-top: 8px;
     }
-    .modal__city {
-      font-size: 0.88rem;
-      color: var(--ink-light);
-      margin-bottom: 16px;
-    }
-
-    /* Slot availability display */
-    .modal__slots {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .modal__dots {
-      display: flex;
-      gap: 5px;
-    }
-    .modal__dot {
-      width: 14px; height: 14px;
-      border-radius: 50%;
-    }
+    .modal__city { font-size: 0.88rem; color: var(--ink-light); margin-bottom: 16px; }
+    .modal__slots { display: flex; align-items: center; gap: 12px; }
+    .modal__dots { display: flex; gap: 5px; }
+    .modal__dot { width: 14px; height: 14px; border-radius: 50%; }
     .modal__dot--booked { background: #e8e8e8; }
     .modal__slot-text { font-size: 0.92rem; font-weight: 600; color: var(--ink); }
     .modal__slot-sub { font-size: 0.78rem; color: var(--ink-light); margin-top: 1px; }
 
-    /* Full booked state */
     .modal__full-msg {
       background: #fff5f5;
       border: 1px solid #fecaca;
@@ -260,21 +370,31 @@
       color: #b03030;
       margin: 16px 24px 0;
     }
+    .btn-waitlist {
+      width: calc(100% - 48px);
+      margin: 16px 24px 24px;
+      padding: 12px;
+      background: var(--bg);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      border-radius: 50px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-waitlist:hover { background: var(--ink); color: var(--white); }
 
     /* Form */
     .modal__form { padding: 20px 24px 24px; }
-    .modal__form-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-      color: var(--ink);
-    }
-
+    .modal__form-title { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: var(--ink); }
     .form-group { margin-bottom: 16px; }
     .form-label {
       display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.82rem; font-weight: 600;
       color: var(--ink-mid);
       margin-bottom: 6px;
       letter-spacing: 0.02em;
@@ -291,22 +411,14 @@
       background: var(--white);
       transition: border-color 0.2s;
       outline: none;
+      box-sizing: border-box;
     }
-    .form-input:focus, .form-textarea:focus {
-      border-color: var(--ink);
-    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--ink); }
     .form-textarea { resize: vertical; min-height: 72px; }
 
-    /* Checkboxes */
-    .checkbox-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
+    .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
       padding: 9px 12px;
       border: 1.5px solid var(--divider);
       border-radius: 8px;
@@ -317,10 +429,8 @@
       user-select: none;
     }
     .checkbox-item:has(input:checked) {
-      border-color: var(--ink);
-      background: var(--bg);
-      color: var(--ink);
-      font-weight: 500;
+      border-color: var(--ink); background: var(--bg);
+      color: var(--ink); font-weight: 500;
     }
     .checkbox-item input { display: none; }
     .checkbox-box {
@@ -328,77 +438,47 @@
       border-radius: 4px;
       border: 2px solid currentColor;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      font-size: 10px;
+      flex-shrink: 0; font-size: 10px;
     }
+    .required-note { font-size: 0.75rem; color: var(--ink-light); margin-bottom: 16px; }
 
     .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: var(--ink);
-      color: var(--white);
-      border: none;
-      border-radius: 50px;
+      width: 100%; padding: 14px;
+      background: var(--ink); color: var(--white);
+      border: none; border-radius: 50px;
       font-family: var(--font-body);
-      font-size: 0.95rem;
-      font-weight: 700;
+      font-size: 0.95rem; font-weight: 700;
       cursor: pointer;
       transition: background 0.2s, transform 0.15s;
       margin-top: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .btn-submit:hover { background: var(--ink-mid); transform: translateY(-1px); }
-    .btn-submit:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-
     .modal-note {
-      font-size: 0.75rem;
-      color: var(--ink-light);
-      text-align: center;
-      margin-top: 10px;
-      line-height: 1.5;
+      font-size: 0.75rem; color: var(--ink-light);
+      text-align: center; margin-top: 10px; line-height: 1.5;
     }
 
-    /* Waitlist CTA */
-    .btn-waitlist {
-      width: 100%;
-      padding: 12px;
-      background: var(--bg);
-      color: var(--ink);
-      border: 2px solid var(--ink);
-      border-radius: 50px;
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      text-decoration: none;
-      margin: 16px 24px 24px;
-      transition: background 0.15s;
-    }
-    .btn-waitlist:hover { background: var(--ink); color: var(--white); }
-
-    /* Required notice */
-    .required-note {
-      font-size: 0.75rem;
-      color: var(--ink-light);
-      margin-bottom: 16px;
-    }
-
+    /* ── Mobile ── */
     @media (max-width: 640px) {
-      .cal-cell { min-height: 80px; padding: 7px 6px 6px; }
-      .cal-cell__city { font-size: 0.6rem; }
-      .cal-cell__slots { gap: 2px; }
-      .slot-dot { width: 6px; height: 6px; }
-      .checkbox-grid { grid-template-columns: 1fr; }
+      .week-row {
+        grid-template-columns: 100px 1fr auto;
+        padding: 13px 14px;
+        min-height: 64px;
+      }
+      .week-row__daynum { font-size: 1.1rem; }
+      .week-row__city-name { font-size: 0.85rem; }
+      .week-row__city-sub { font-size: 0.7rem; }
+      .week-row__city { padding: 0 10px; }
+      .slot-dot { width: 7px; height: 7px; }
+      .zip-finder { padding: 20px 16px; }
+      .zip-finder__row { flex-wrap: wrap; }
+      .zip-input { width: 100%; }
+      .zip-btn { width: 100%; text-align: center; }
       .modal { border-radius: 16px 16px 0 0; }
       .modal-overlay { align-items: flex-end; padding: 0; }
+      .checkbox-grid { grid-template-columns: 1fr; }
+      .today-badge { display: none; }
     }
   </style>
 </head>
@@ -431,47 +511,34 @@
     <span class="eyebrow">Service Schedule</span>
     <h1>When is Sharp Mom near you?</h1>
     <p style="max-width:520px;margin-top:12px;font-size:1.05rem;color:var(--ink-mid)">
-      Click any colored day to check availability and request a slot.
-      Tools stay on your porch — no need to be home.
+      Click any day below to check availability and request a sharpening slot.
     </p>
   </div>
 </section>
 
-<!-- ── CALENDAR ── -->
+<!-- ── WEEK VIEW ── -->
 <section class="section">
   <div class="container">
 
-    <!-- Legend -->
-    <div class="legend" id="legend"></div>
-
-    <!-- Month nav -->
-    <div class="month-nav">
-      <button class="month-btn" id="prev-month" aria-label="Previous month">‹</button>
-      <h2 id="cal-title"></h2>
-      <button class="month-btn" id="next-month" aria-label="Next month">›</button>
+    <!-- Week navigator -->
+    <div class="week-nav">
+      <button class="week-btn" id="prev-week" aria-label="Previous week">‹</button>
+      <h2 id="week-title"></h2>
+      <button class="week-btn" id="next-week" aria-label="Next week">›</button>
     </div>
 
-    <!-- Grid -->
-    <div class="cal-wrap">
-      <div class="cal-grid" id="cal-grid">
-        <div class="cal-hdr">Sun</div>
-        <div class="cal-hdr">Mon</div>
-        <div class="cal-hdr">Tue</div>
-        <div class="cal-hdr">Wed</div>
-        <div class="cal-hdr">Thu</div>
-        <div class="cal-hdr">Fri</div>
-        <div class="cal-hdr">Sat</div>
-      </div>
-    </div>
+    <!-- 7-row week grid -->
+    <div class="week-grid" id="week-grid"></div>
 
-    <div class="notice" style="margin-top:32px">
-      <div class="notice__icon">💡</div>
-      <div>
-        Only have 1–2 items and don't meet the $80 minimum?
-        <a href="sms:+14083909940" style="color:var(--ink);font-weight:600">Text Sharp Mom</a>
-        to arrange a drop-off and she'll work it into her route.
-        Salon &amp; grooming clients have no minimum.
+    <!-- ZIP finder -->
+    <div class="zip-finder">
+      <div class="zip-finder__title">Don't see your city?</div>
+      <div class="zip-finder__sub">Enter your ZIP code to find out when Sharp Mom is in your area — takes less than a minute.</div>
+      <div class="zip-finder__row">
+        <input class="zip-input" type="text" id="zip-input" placeholder="e.g. 94087" maxlength="5" inputmode="numeric" />
+        <button class="zip-btn" id="zip-btn">Find My Day</button>
       </div>
+      <div class="zip-result" id="zip-result"></div>
     </div>
 
   </div>
@@ -481,7 +548,6 @@
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-date">
   <div class="modal" id="modal">
 
-    <!-- Top: date + slot count -->
     <div class="modal__top">
       <div class="modal__color-bar" id="modal-color-bar"></div>
       <button class="modal__close" id="modal-close" aria-label="Close">✕</button>
@@ -496,7 +562,6 @@
       </div>
     </div>
 
-    <!-- Fully booked state (hidden by default) -->
     <div class="modal__full-msg" id="modal-full-msg" style="display:none">
       😔 This day is fully booked. Text Sharp Mom to join the waitlist — cancellations do happen!
     </div>
@@ -504,8 +569,8 @@
       📱 Join Waitlist via Text
     </a>
 
-    <!-- Booking form -->
-    <div class="modal__form" id="modal-form">
+    <!-- Full form (standard booking) -->
+    <div class="modal__form" id="modal-form" style="display:none">
       <div class="modal__form-title">Request a Slot</div>
       <p class="required-note">Fields marked <span style="color:#c94040">*</span> are required</p>
 
@@ -513,65 +578,83 @@
         <label class="form-label" for="f-name">Full name <span>*</span></label>
         <input class="form-input" type="text" id="f-name" placeholder="Jane Smith" autocomplete="name" />
       </div>
-
       <div class="form-group">
         <label class="form-label" for="f-phone">Phone number <span>*</span></label>
         <input class="form-input" type="tel" id="f-phone" placeholder="408-555-1234" autocomplete="tel" />
       </div>
-
       <div class="form-group">
         <label class="form-label" for="f-address">Service address <span>*</span></label>
         <input class="form-input" type="text" id="f-address" placeholder="123 Main St, Sunnyvale, CA" autocomplete="street-address" />
       </div>
-
       <div class="form-group">
         <label class="form-label">Services needed <span>*</span></label>
         <div class="checkbox-grid" id="services-grid">
-          <label class="checkbox-item">
-            <input type="checkbox" value="Kitchen knives" />
-            <span class="checkbox-box">✓</span> Kitchen knives
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" value="Scissors" />
-            <span class="checkbox-box">✓</span> Scissors
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" value="Garden tools" />
-            <span class="checkbox-box">✓</span> Garden tools
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" value="Salon / Grooming" />
-            <span class="checkbox-box">✓</span> Salon / Grooming
-          </label>
+          <label class="checkbox-item"><input type="checkbox" value="Kitchen knives" /><span class="checkbox-box">✓</span> Kitchen knives</label>
+          <label class="checkbox-item"><input type="checkbox" value="Scissors" /><span class="checkbox-box">✓</span> Scissors</label>
+          <label class="checkbox-item"><input type="checkbox" value="Garden tools" /><span class="checkbox-box">✓</span> Garden tools</label>
+          <label class="checkbox-item"><input type="checkbox" value="Salon / Grooming" /><span class="checkbox-box">✓</span> Salon / Grooming</label>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label" for="f-items">Items &amp; approximate count <span>*</span></label>
         <input class="form-input" type="text" id="f-items" placeholder="e.g. 4 kitchen knives, 2 scissors, 1 cleaver" />
       </div>
-
       <div class="form-group">
         <label class="form-label" for="f-access">Drop-off &amp; access instructions</label>
-        <textarea class="form-textarea" id="f-access" placeholder="e.g. Leave bag on front porch. Gate code: 1234. Dog in backyard — please don't open gate."></textarea>
+        <textarea class="form-textarea" id="f-access" placeholder="e.g. Leave bag on front porch. Gate code: 1234."></textarea>
       </div>
-
       <div class="form-group">
         <label class="form-label" for="f-notes">Additional notes</label>
-        <textarea class="form-textarea" id="f-notes" placeholder="e.g. One knife has a chip, serrated bread knife, prefer morning pickup" style="min-height:56px"></textarea>
+        <textarea class="form-textarea" id="f-notes" placeholder="e.g. One knife has a chip, prefer morning pickup" style="min-height:56px"></textarea>
       </div>
-
-      <button class="btn-submit" id="btn-submit">
-        📱 Send Booking Request via Text
-      </button>
+      <button class="btn-submit" id="btn-submit">📱 Send Booking Request via Text</button>
       <p style="font-size:0.72rem;color:var(--ink-light);text-align:center;margin-top:10px;line-height:1.5;">
         By texting Sharp Mom Co. you agree to receive automated service messages from this number.
         Msg &amp; data rates may apply. Reply STOP to opt out.
       </p>
-      <p class="modal-note">
-        This opens your Messages app with everything pre-filled.
-        Hit Send — Sharp Mom will confirm your slot by text.
+      <p class="modal-note">This opens your Messages app with everything pre-filled. Hit Send — Sharp Mom will confirm your slot by text.</p>
+    </div>
+
+    <!-- Streamlined form (ZIP lookup — city already known) -->
+    <div class="modal__form" id="modal-form-zip" style="display:none">
+      <div class="modal__form-title">Request a Slot</div>
+      <p class="required-note">Fields marked <span style="color:#c94040">*</span> are required</p>
+
+      <div class="form-group">
+        <label class="form-label" for="fz-name">Full name <span>*</span></label>
+        <input class="form-input" type="text" id="fz-name" placeholder="Jane Smith" autocomplete="name" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="fz-phone">Phone number <span>*</span></label>
+        <input class="form-input" type="tel" id="fz-phone" placeholder="408-555-1234" autocomplete="tel" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="fz-street">Street address <span>*</span></label>
+        <input class="form-input" type="text" id="fz-street" placeholder="123 Main St" autocomplete="address-line1" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Services needed <span>*</span></label>
+        <div class="checkbox-grid" id="services-grid-zip">
+          <label class="checkbox-item"><input type="checkbox" value="Kitchen knives" /><span class="checkbox-box">✓</span> Kitchen knives</label>
+          <label class="checkbox-item"><input type="checkbox" value="Scissors" /><span class="checkbox-box">✓</span> Scissors</label>
+          <label class="checkbox-item"><input type="checkbox" value="Garden tools" /><span class="checkbox-box">✓</span> Garden tools</label>
+          <label class="checkbox-item"><input type="checkbox" value="Salon / Grooming" /><span class="checkbox-box">✓</span> Salon / Grooming</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="fz-items">Items &amp; approximate count <span>*</span></label>
+        <input class="form-input" type="text" id="fz-items" placeholder="e.g. 4 kitchen knives, 2 scissors" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="fz-notes">Notes (optional)</label>
+        <textarea class="form-textarea" id="fz-notes" placeholder="e.g. Gate code, dog in yard, prefer morning" style="min-height:56px"></textarea>
+      </div>
+      <button class="btn-submit" id="btn-submit-zip">📱 Send Booking Request via Text</button>
+      <p style="font-size:0.72rem;color:var(--ink-light);text-align:center;margin-top:10px;line-height:1.5;">
+        By texting Sharp Mom Co. you agree to receive automated service messages from this number.
+        Msg &amp; data rates may apply. Reply STOP to opt out.
       </p>
+      <p class="modal-note">This opens your Messages app with everything pre-filled. Hit Send — Sharp Mom will confirm your slot by text.</p>
     </div>
 
   </div>
@@ -583,7 +666,7 @@
     <div class="footer__inner">
       <div class="footer__brand">
         <div class="footer__logo">Sharp Mom Co.</div>
-        <p>Woman-owned mobile knife &amp; tool sharpening. Proudly serving Santa Clara County.</p>
+        <p>Woman-owned doorstep knife &amp; tool sharpening. Proudly serving Santa Clara County.</p>
         <p style="margin-top:12px">Pay by cash · Venmo · Zelle</p>
       </div>
       <div class="footer__col">
@@ -624,244 +707,274 @@
 // ═══════════════════════════════════════════════════
 // CONFIGURATION
 // ═══════════════════════════════════════════════════
-
-// Step 1: Create a Google Sheet with columns: Date (A), Booked (B)
-// Step 2: Deploy Google Apps Script as web app (see sheets-setup.js)
-// Step 3: Paste your web app URL here:
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzjhMVJA1wmubVMzpDLHh0CetWbhzypMMRAbkorwKDnjVRiYIS0QpuoVXIYDR8PG34xhg/exec'; // e.g. 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
-
-const TOTAL_SLOTS = 5;
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzjhMVJA1wmubVMzpDLHh0CetWbhzypMMRAbkorwKDnjVRiYIS0QpuoVXIYDR8PG34xhg/exec';
 const PHONE = '+14083909940';
+const SLOTS_WEEKDAY = 3;
+const SLOTS_WEEKEND = 5;
 
 // ═══════════════════════════════════════════════════
 // ROUTE DEFINITIONS
 // ═══════════════════════════════════════════════════
-const ROUTES = [
-  {
-    id: 'A',
-    label: 'North Peninsula',
-    subLabel: 'Menlo Park · Stanford · Palo Alto',
-    color: '#abe4e3',
-    w13: { day: 1, cities: 'Menlo Park / Stanford' },
-    w24: { day: 2, cities: 'Palo Alto' }
-  },
-  {
-    id: 'B',
-    label: 'Mid-Corridor',
-    subLabel: 'Los Altos · Mountain View',
-    color: '#D4832A',
-    w13: { day: 3, cities: 'Los Altos' },
-    w24: { day: 4, cities: 'Mountain View' }
-  },
-  {
-    id: 'C',
-    label: 'Central SV',
-    subLabel: 'Sunnyvale · Santa Clara',
-    color: '#f6bdd3',
-    w13: { day: 5, cities: 'Sunnyvale' },
-    w24: { day: 6, cities: 'Santa Clara' }
-  },
-  {
-    id: 'D',
-    label: 'San Jose Core',
-    subLabel: 'West SJ · Willow Glen',
-    color: '#a4bbd9',
-    w13: { day: 6, cities: 'W. San Jose / Willow Glen' },
-    w24: { day: 0, cities: 'W. San Jose / Willow Glen' }
-  },
-  {
-    id: 'E',
-    label: 'South Bay Hills',
-    subLabel: 'Campbell · Saratoga · Los Gatos',
-    color: '#e7b4c8',
-    w13: { day: 0, cities: 'Campbell / Saratoga / Los Gatos' },
-    w24: { day: 1, cities: 'Campbell / Saratoga / Los Gatos' }
-  }
-];
+const ROUTES = {
+  MON: { id:'MON', label:'Monday',    subLabel:'Sunnyvale · Santa Clara',                                    color:'#abe4e3', slots:SLOTS_WEEKDAY, dow:1 },
+  TUE: { id:'TUE', label:'Tuesday',   subLabel:'Mountain View (N) · Los Altos',                              color:'#D4832A', slots:SLOTS_WEEKDAY, dow:2 },
+  WED: { id:'WED', label:'Wednesday', subLabel:'Cupertino · S. Sunnyvale',                                   color:'#b5cfe8', slots:SLOTS_WEEKDAY, dow:3 },
+  THU: { id:'THU', label:'Thursday',  subLabel:'San Jose (rotating neighborhoods)',                           color:'#c8b4e8', slots:SLOTS_WEEKDAY, dow:4 },
+  FRI: { id:'FRI', label:'Friday',    subLabel:'Premium — rotating city',                                    color:'#f6c87a', slots:SLOTS_WEEKDAY, dow:5 },
+  SAT: { id:'SAT', label:'Saturday',  subLabel:'Palo Alto · Los Altos Hills · Los Altos',                    color:'#f6bdd3', slots:SLOTS_WEEKEND, dow:6 },
+  SUN: { id:'SUN', label:'Sunday',    subLabel:'Mtn View (S) · Saratoga · Monte Sereno · Los Gatos · Campbell', color:'#e7b4c8', slots:SLOTS_WEEKEND, dow:0 }
+};
+
+const FRI_ROTATION = {
+  1: 'Palo Alto (north)',
+  2: 'Mountain View (north · 94043)',
+  3: 'Los Gatos · Monte Sereno',
+  4: 'Los Altos Hills · Los Altos'
+};
+const THU_ROTATION = {
+  1: 'San Jose — Willow Glen',
+  2: 'San Jose — Almaden Valley',
+  3: 'San Jose — Silver Creek / Evergreen',
+  4: 'San Jose — Cambrian / W. San Jose'
+};
 
 // ═══════════════════════════════════════════════════
-// SLOT DATA  (keyed by 'YYYY-MM-DD' → booked count)
+// ZIP → ROUTE MAP
 // ═══════════════════════════════════════════════════
-let slotData = {}; // populated from Google Sheets
+const ZIP_MAP = {
+  // Sunnyvale (Monday)
+  '94085':'MON','94086':'MON','94087':'MON','94089':'MON',
+  // Santa Clara (Monday)
+  '95050':'MON','95051':'MON','95052':'MON','95053':'MON','95054':'MON','95055':'MON',
+  // Mountain View north (Tuesday)
+  '94043':'TUE',
+  // Los Altos (Tuesday + Saturday)
+  '94022':'TUE,SAT','94024':'TUE,SAT',
+  // Cupertino (Wednesday)
+  '95014':'WED','95015':'WED',
+  // South Sunnyvale (Wednesday)
+  '95002':'WED',
+  // San Jose (Thursday — various neighborhoods)
+  '95125':'THU','95126':'THU','95128':'THU', // Willow Glen / W SJ
+  '95120':'THU','95123':'THU','95124':'THU', // Almaden / Cambrian
+  '95121':'THU','95122':'THU','95148':'THU', // Silver Creek / Evergreen
+  '95008':'THU','95130':'THU','95117':'THU', // Cambrian / W SJ
+  // Los Gatos / Monte Sereno (Friday W3 + Sunday)
+  '95030':'FRI,SUN','95031':'FRI,SUN','95032':'FRI,SUN','95033':'FRI,SUN',
+  // Palo Alto (Friday W1 + Saturday)
+  '94301':'FRI,SAT','94302':'FRI,SAT','94303':'FRI,SAT','94304':'FRI,SAT','94305':'FRI,SAT','94306':'FRI,SAT',
+  // Los Altos Hills (Friday W4 + Saturday)
+  '94022':'FRI,SAT',
+  // Mountain View south (Sunday)
+  '94040':'SUN','94041':'SUN',
+  // Saratoga (Sunday)
+  '95070':'SUN','95071':'SUN',
+  // Campbell (Sunday)
+  '95008':'SUN',
+};
+
+// Human-readable city name per ZIP (for result display)
+const ZIP_CITY = {
+  '94085':'Sunnyvale','94086':'Sunnyvale','94087':'Sunnyvale','94089':'Sunnyvale',
+  '95050':'Santa Clara','95051':'Santa Clara','95052':'Santa Clara','95053':'Santa Clara','95054':'Santa Clara','95055':'Santa Clara',
+  '94043':'Mountain View (North)','94040':'Mountain View (South)','94041':'Mountain View',
+  '94022':'Los Altos / Los Altos Hills','94024':'Los Altos',
+  '95014':'Cupertino','95015':'Cupertino',
+  '94301':'Palo Alto','94302':'Palo Alto','94303':'Palo Alto','94304':'Palo Alto','94305':'Palo Alto','94306':'Palo Alto',
+  '95030':'Los Gatos','95031':'Los Gatos','95032':'Los Gatos','95033':'Los Gatos',
+  '95070':'Saratoga','95071':'Saratoga',
+  '95008':'Campbell',
+  '95125':'San Jose (Willow Glen)','95126':'San Jose','95128':'San Jose (W. SJ)',
+  '95120':'San Jose (Almaden)','95123':'San Jose','95124':'San Jose (Cambrian)',
+  '95121':'San Jose (Silver Creek)','95122':'San Jose','95148':'San Jose (Evergreen)',
+  '95130':'San Jose (W. SJ)','95117':'San Jose',
+};
+
+// ═══════════════════════════════════════════════════
+// SLOT DATA
+// ═══════════════════════════════════════════════════
+let slotData = {};
 
 async function fetchSlotData() {
   if (!SHEETS_URL) return;
   try {
     const res = await fetch(SHEETS_URL);
-    slotData = await res.json(); // { 'YYYY-MM-DD': bookedCount }
-  } catch (e) {
+    slotData = await res.json();
+  } catch(e) {
     console.warn('Could not load slot data from Google Sheets:', e);
   }
 }
+function bookedCount(dateStr)       { return slotData[dateStr] || 0; }
+function availableSlots(dateStr, r) { return Math.max(0, r.slots - bookedCount(dateStr)); }
+function toDateStr(y,m,d)           { return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
 
-function bookedCount(dateStr) {
-  return slotData[dateStr] || 0;
+// ═══════════════════════════════════════════════════
+// SERVICE DAY HELPERS
+// ═══════════════════════════════════════════════════
+function weekOfMonth(day) { return Math.ceil(day / 7); }
+
+function getCitiesLabel(route, date) {
+  const wk = weekOfMonth(date.getDate());
+  if (route.id === 'FRI') return FRI_ROTATION[wk] || FRI_ROTATION[4];
+  if (route.id === 'THU') return THU_ROTATION[wk] || THU_ROTATION[4];
+  return route.subLabel;
 }
-function availableSlots(dateStr) {
-  return Math.max(0, TOTAL_SLOTS - bookedCount(dateStr));
+
+function getRouteForDate(date) {
+  const dow = date.getDay();
+  return Object.values(ROUTES).find(r => r.dow === dow) || null;
 }
 
 // ═══════════════════════════════════════════════════
-// SERVICE DAY LOGIC
+// WEEK STATE
 // ═══════════════════════════════════════════════════
-function getServiceDaysForMonth(year, month) {
-  const result = [];
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const counts = [0,0,0,0,0,0,0];
+const MONTH_NAMES  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_SHORT  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY_NAMES    = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dow = new Date(year, month, d).getDay();
-    counts[dow]++;
-    const occ = counts[dow];
+// weekStart = today's date (always starts from today, 7 days forward)
+let weekOffset = 0; // 0 = current 7-day window, 1 = next 7 days, etc.
 
-    for (const route of ROUTES) {
-      if (route.w13.day === dow && (occ === 1 || occ === 3)) {
-        result.push({ date: d, route, cities: route.w13.cities });
-      }
-      if (route.w24.day === dow && (occ === 2 || occ === 4)) {
-        result.push({ date: d, route, cities: route.w24.cities });
-      }
-    }
-  }
-  return result;
+function getWindowStart() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + weekOffset * 7);
+  return d;
 }
 
-function toDateStr(year, month, day) {
-  return `${year}-${String(month + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+function formatWeekTitle(start, end) {
+  const s = `${MONTH_SHORT[start.getMonth()]} ${start.getDate()}`;
+  const e = `${MONTH_SHORT[end.getMonth()]} ${end.getDate()}, ${end.getFullYear()}`;
+  return `${s} – ${e}`;
 }
 
 // ═══════════════════════════════════════════════════
-// CALENDAR RENDER
+// RENDER WEEK
 // ═══════════════════════════════════════════════════
-const MONTHS = ['January','February','March','April','May','June',
-                'July','August','September','October','November','December'];
+function renderWeek() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const start = getWindowStart();
 
-let currentYear  = new Date().getFullYear();
-let currentMonth = new Date().getMonth();
+  // Build array of 7 dates
+  const days = Array.from({length:7}, (_,i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    return d;
+  });
 
-function renderLegend() {
-  const el = document.getElementById('legend');
-  el.innerHTML = ROUTES.map(r => `
-    <div class="legend-item">
-      <span class="legend-dot" style="background:${r.color}"></span>
-      <span>${r.label} <span style="opacity:.6;font-weight:400">— ${r.subLabel}</span></span>
-    </div>`).join('') + `
-    <div class="legend-item">
-      <span class="legend-dot" style="background:#e8e8e8;border:1px solid #ccc"></span>
-      <span style="opacity:.6">Not a service day</span>
-    </div>`;
-}
+  const end = days[6];
+  document.getElementById('week-title').textContent = formatWeekTitle(start, end);
 
-function renderCalendar(year, month) {
-  document.getElementById('cal-title').textContent = `${MONTHS[month]} ${year}`;
+  // Disable prev button if we're on current window
+  document.getElementById('prev-week').disabled = weekOffset <= 0;
 
-  const serviceDays = getServiceDaysForMonth(year, month);
-  const lookup = {};
-  for (const s of serviceDays) lookup[s.date] = s;
-
-  const firstDOW    = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const today       = new Date();
-
-  const grid = document.getElementById('cal-grid');
-  const headers = Array.from(grid.querySelectorAll('.cal-hdr'));
+  const grid = document.getElementById('week-grid');
   grid.innerHTML = '';
-  headers.forEach(h => grid.appendChild(h));
 
-  // Leading empty cells
-  for (let i = 0; i < firstDOW; i++) {
-    const el = document.createElement('div');
-    el.className = 'cal-cell cal-cell--empty';
-    grid.appendChild(el);
-  }
+  days.forEach(date => {
+    const isToday = date.getTime() === today.getTime();
+    const route   = getRouteForDate(date);
+    const dateStr = toDateStr(date.getFullYear(), date.getMonth(), date.getDate());
+    const avail   = route ? availableSlots(dateStr, route) : 0;
+    const total   = route ? route.slots : 0;
+    const isFull  = route && avail === 0;
+    const cities  = route ? getCitiesLabel(route, date) : null;
 
-  for (let d = 1; d <= daysInMonth; d++) {
-    const svc      = lookup[d];
-    const dateStr  = toDateStr(year, month, d);
-    const avail    = availableSlots(dateStr);
-    const booked   = TOTAL_SLOTS - avail;
-    const isToday  = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
-    const isPast   = new Date(year, month, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const row = document.createElement('div');
+    row.className = 'week-row' +
+      (isToday ? ' week-row--today' : '') +
+      (isFull  ? ' week-row--full'  : '');
 
-    const cell = document.createElement('div');
-
-    if (svc && !isPast) {
-      // Service day
-      const isFull = avail === 0;
-      cell.className = 'cal-cell cal-cell--service' + (isFull ? ' cal-cell--full' : '') + (isToday ? ' cal-cell--today' : '');
-      cell.style.background  = svc.route.color + '28';
-      cell.style.borderColor = svc.route.color;
-
-      cell.innerHTML = `
-        <div class="cal-cell__num">${isToday ? `<span style="background:var(--ink);color:var(--white);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem">${d}</span>` : d}</div>
-        <div class="cal-cell__city">${svc.cities}</div>
-        <div class="cal-cell__slots">
-          ${Array.from({length: TOTAL_SLOTS}, (_,i) =>
-            `<div class="slot-dot ${i < avail ? 'slot-dot--available' : 'slot-dot--booked'}"
-              style="${i < avail ? `background:${svc.route.color}` : ''}"></div>`
-          ).join('')}
-        </div>
-        ${isFull ? `<div class="cal-cell__tag cal-cell__tag--full">Full</div>`
-                 : `<div class="cal-cell__tag">${avail} open</div>`}
-      `;
-
-      cell.addEventListener('click', () => openModal(d, month, year, svc, dateStr, avail));
-
+    if (route) {
+      row.style.background   = route.color + '22';
+      row.style.borderColor  = route.color;
     } else {
-      // Non-service or past service day
-      cell.className = 'cal-cell cal-cell--nonservice' + (isToday ? ' cal-cell--today' : '');
-      cell.innerHTML = `<div class="cal-cell__num">${isToday ? `<span style="background:var(--ink);color:var(--white);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem">${d}</span>` : d}</div>`;
+      row.style.background   = 'var(--white)';
+      row.style.borderColor  = 'var(--divider)';
+      row.style.opacity      = '0.45';
+      row.style.cursor       = 'default';
     }
 
-    grid.appendChild(cell);
-  }
+    // Dots HTML
+    const dotsHtml = route ? Array.from({length:total}, (_,i) =>
+      `<div class="slot-dot ${i < avail ? '' : 'slot-dot--booked'}"
+        style="${i < avail ? `background:${route.color}` : ''}"></div>`
+    ).join('') : '';
+
+    const tagHtml = route
+      ? (isFull
+          ? `<span class="slot-tag slot-tag--full">Full</span>`
+          : `<span class="slot-tag slot-tag--open">${avail} open</span>`)
+      : `<span class="slot-tag" style="opacity:.4">No service</span>`;
+
+    row.innerHTML = `
+      ${isToday ? `<span class="today-badge">Today</span>` : ''}
+      <div class="week-row__date">
+        <div class="week-row__dayname">${DAY_NAMES[date.getDay()]}</div>
+        <div class="week-row__daynum">${date.getDate()}</div>
+        <div class="week-row__month">${MONTH_SHORT[date.getMonth()]}</div>
+      </div>
+      <div class="week-row__city">
+        <div class="week-row__city-name">${cities || '—'}</div>
+        ${route ? `<div class="week-row__city-sub">${route.label} route</div>` : ''}
+      </div>
+      <div class="week-row__slots">
+        <div class="week-row__dots">${dotsHtml}</div>
+        ${tagHtml}
+      </div>
+    `;
+
+    if (route) {
+      row.addEventListener('click', () =>
+        openModal(date, { route, cities }, dateStr, avail, total, false)
+      );
+    }
+
+    grid.appendChild(row);
+  });
 }
 
 // ═══════════════════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════════════════
-let _modalDate = '', _modalCities = '';
+let _modalDate = '', _modalCities = '', _modalIsZip = false, _zipCity = '';
 
-function openModal(day, month, year, svc, dateStr, avail) {
-  const booked = TOTAL_SLOTS - avail;
+function openModal(date, svc, dateStr, avail, total, isZip) {
   const isFull = avail === 0;
-  const dateLabel = new Date(year, month, day).toLocaleDateString('en-US',
+  const dateLabel = date.toLocaleDateString('en-US',
     { weekday:'long', month:'long', day:'numeric' });
 
   _modalDate   = dateStr;
   _modalCities = svc.cities;
+  _modalIsZip  = isZip;
 
-  // Color bar
   document.getElementById('modal-color-bar').style.background = svc.route.color;
-
-  // Date + city
-  document.getElementById('modal-date').textContent  = dateLabel;
-  document.getElementById('modal-city').textContent  = `📍 ${svc.cities}`;
+  document.getElementById('modal-date').textContent = dateLabel;
+  document.getElementById('modal-city').textContent = `📍 ${svc.cities}`;
 
   // Dots
-  const dotsEl = document.getElementById('modal-dots');
-  dotsEl.innerHTML = Array.from({length: TOTAL_SLOTS}, (_,i) =>
+  document.getElementById('modal-dots').innerHTML = Array.from({length:total}, (_,i) =>
     `<div class="modal__dot ${i < avail ? '' : 'modal__dot--booked'}"
       style="${i < avail ? `background:${svc.route.color}` : ''}"></div>`
   ).join('');
 
-  // Slot text
   document.getElementById('modal-slot-text').textContent =
-    isFull ? 'Fully booked' : `${avail} of ${TOTAL_SLOTS} slots available`;
+    isFull ? 'Fully booked' : `${avail} of ${total} slots available`;
   document.getElementById('modal-slot-sub').textContent =
     isFull ? 'Text Sharp Mom to join the waitlist'
-           : `${booked} slot${booked !== 1 ? 's' : ''} already requested`;
+           : `${total - avail} slot${total - avail !== 1 ? 's' : ''} already requested`;
 
-  // Toggle form vs waitlist
-  document.getElementById('modal-full-msg').style.display     = isFull ? 'block' : 'none';
-  document.getElementById('modal-waitlist-btn').style.display = isFull ? 'flex'  : 'none';
-  document.getElementById('modal-form').style.display         = isFull ? 'none'  : 'block';
+  // Show/hide sections
+  document.getElementById('modal-full-msg').style.display      = isFull ? 'block' : 'none';
+  document.getElementById('modal-waitlist-btn').style.display  = isFull ? 'flex'  : 'none';
+  document.getElementById('modal-form').style.display          = (!isFull && !isZip) ? 'block' : 'none';
+  document.getElementById('modal-form-zip').style.display      = (!isFull && isZip)  ? 'block' : 'none';
 
-  // Pre-fill date/city context into access field placeholder
-  document.getElementById('f-access').placeholder =
-    'e.g. Leave bag on front porch. Gate code: 1234. Dog in backyard — please don\'t open gate.';
+  // Pre-fill city in ZIP form street placeholder
+  if (isZip && _zipCity) {
+    document.getElementById('fz-street').placeholder = `123 Main St, ${_zipCity}, CA`;
+  }
 
-  // Open overlay
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -878,35 +991,18 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ═══════════════════════════════════════════════════
-// FORM SUBMIT → PRE-FILLED SMS
+// SMS BUILDER (shared)
 // ═══════════════════════════════════════════════════
-document.getElementById('btn-submit').addEventListener('click', () => {
-  const name    = document.getElementById('f-name').value.trim();
-  const phone   = document.getElementById('f-phone').value.trim();
-  const address = document.getElementById('f-address').value.trim();
-  const items   = document.getElementById('f-items').value.trim();
-  const access  = document.getElementById('f-access').value.trim();
-  const notes   = document.getElementById('f-notes').value.trim();
-
-  const services = Array.from(document.querySelectorAll('#services-grid input:checked'))
-    .map(cb => cb.value).join(', ');
-
-  // Validation
-  if (!name || !phone || !address || !services || !items) {
-    alert('Please fill in all required fields (name, phone, address, services, and items).');
-    return;
-  }
-
-  // Format date nicely for the message
-  const [y, mo, d] = _modalDate.split('-');
-  const dateLabel = new Date(Number(y), Number(mo)-1, Number(d))
-    .toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
-
-  // Build message
+function buildSMS({ name, phone, address, services, items, notes, date, area }) {
+  const dateLabel = (() => {
+    const [y,m,d] = date.split('-');
+    return new Date(+y,+m-1,+d).toLocaleDateString('en-US',
+      {weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  })();
   const lines = [
     '📅 NEW SLOT REQUEST — Sharp Mom Co.',
     `Date: ${dateLabel}`,
-    `Area: ${_modalCities}`,
+    `Area: ${area}`,
     '---',
     `Name: ${name}`,
     `Phone: ${phone}`,
@@ -914,30 +1010,23 @@ document.getElementById('btn-submit').addEventListener('click', () => {
     `Services: ${services}`,
     `Items: ${items}`,
   ];
-
-  if (access) lines.push(`Drop-off/Access: ${access}`);
   if (notes) lines.push(`Notes: ${notes}`);
+  return lines.join('\n');
+}
 
-  const messageBody = lines.join('\n');
-
-  // Detect Apple platforms (macOS, iOS, iPadOS) to determine query separator
-  const isApple = /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+function sendSMSLink(body) {
+  const isApple = /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const sep = isApple ? '&' : '?';
-  const smsLink = `sms:${PHONE}${sep}body=${encodeURIComponent(messageBody)}`;
-
-  // Use anchor click — more reliable than window.location.href for SMS URIs
   const a = document.createElement('a');
-  a.href = smsLink;
+  a.href = `sms:${PHONE}${sep}body=${encodeURIComponent(body)}`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
 
-  // Show copy-fallback in case body doesn't pre-fill on the device
-  showFallback(messageBody);
-});
-
-function showFallback(msg) {
+function showFallback(msg, containerId) {
+  const container = document.getElementById(containerId);
   const old = document.getElementById('sms-fallback');
   if (old) old.remove();
 
@@ -957,36 +1046,184 @@ function showFallback(msg) {
   copyBtn.style.cssText = 'padding:7px 16px;border-radius:50px;border:1.5px solid #1a1a1a;background:#1a1a1a;color:#fff;font-size:0.82rem;font-weight:600;cursor:pointer';
   copyBtn.textContent = 'Copy message';
   copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(msg).then(() => {
-      copyBtn.textContent = 'Copied!';
-    });
+    navigator.clipboard.writeText(msg).then(() => { copyBtn.textContent = 'Copied!'; });
   });
 
   const hint = document.createElement('span');
   hint.style.cssText = 'margin-left:10px;font-size:0.78rem;color:#888';
-  hint.textContent = 'Then paste it into a text to ' + PHONE;
+  hint.textContent = `Then paste it into a text to ${PHONE}`;
 
-  box.appendChild(label);
-  box.appendChild(pre);
-  box.appendChild(copyBtn);
-  box.appendChild(hint);
-
-  document.getElementById('modal-form').appendChild(box);
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  box.appendChild(label); box.appendChild(pre); box.appendChild(copyBtn); box.appendChild(hint);
+  container.appendChild(box);
+  box.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
-// ═══════════════════════════════════════════════════
-// MONTH NAV
-// ═══════════════════════════════════════════════════
-document.getElementById('prev-month').addEventListener('click', () => {
-  currentMonth--;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  renderCalendar(currentYear, currentMonth);
+// Standard form submit
+document.getElementById('btn-submit').addEventListener('click', () => {
+  const name    = document.getElementById('f-name').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const address = document.getElementById('f-address').value.trim();
+  const items   = document.getElementById('f-items').value.trim();
+  const notes   = (document.getElementById('f-access').value.trim() + ' ' + document.getElementById('f-notes').value.trim()).trim();
+  const services = Array.from(document.querySelectorAll('#services-grid input:checked')).map(c=>c.value).join(', ');
+
+  if (!name || !phone || !address || !services || !items) {
+    alert('Please fill in all required fields (name, phone, address, services, and items).'); return;
+  }
+  const msg = buildSMS({ name, phone, address, services, items, notes, date: _modalDate, area: _modalCities });
+  sendSMSLink(msg);
+  showFallback(msg, 'modal-form');
 });
-document.getElementById('next-month').addEventListener('click', () => {
-  currentMonth++;
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  renderCalendar(currentYear, currentMonth);
+
+// ZIP streamlined form submit
+document.getElementById('btn-submit-zip').addEventListener('click', () => {
+  const name    = document.getElementById('fz-name').value.trim();
+  const phone   = document.getElementById('fz-phone').value.trim();
+  const street  = document.getElementById('fz-street').value.trim();
+  const items   = document.getElementById('fz-items').value.trim();
+  const notes   = document.getElementById('fz-notes').value.trim();
+  const services = Array.from(document.querySelectorAll('#services-grid-zip input:checked')).map(c=>c.value).join(', ');
+  const address = _zipCity ? `${street}, ${_zipCity}, CA` : street;
+
+  if (!name || !phone || !street || !services || !items) {
+    alert('Please fill in all required fields.'); return;
+  }
+  const msg = buildSMS({ name, phone, address, services, items, notes, date: _modalDate, area: _modalCities });
+  sendSMSLink(msg);
+  showFallback(msg, 'modal-form-zip');
+});
+
+// ═══════════════════════════════════════════════════
+// ZIP FINDER
+// ═══════════════════════════════════════════════════
+function getNextOccurrence(dow) {
+  // Returns the next date (from today) that falls on `dow` (0=Sun…6=Sat)
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(today);
+  const diff = (dow - today.getDay() + 7) % 7;
+  d.setDate(today.getDate() + diff);
+  return d;
+}
+
+function buildZipRow(date, route, cities) {
+  const dateStr = toDateStr(date.getFullYear(), date.getMonth(), date.getDate());
+  const avail   = availableSlots(dateStr, route);
+  const total   = route.slots;
+  const isFull  = avail === 0;
+
+  const dotsHtml = Array.from({length:total}, (_,i) =>
+    `<div class="slot-dot ${i < avail ? '' : 'slot-dot--booked'}"
+      style="${i < avail ? `background:${route.color}` : ''}"></div>`
+  ).join('');
+
+  const tagHtml = isFull
+    ? `<span class="slot-tag slot-tag--full">Full</span>`
+    : `<span class="slot-tag slot-tag--open">${avail} open</span>`;
+
+  const dayLabel = date.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+
+  const row = document.createElement('div');
+  row.className = 'week-row' + (isFull ? ' week-row--full' : '');
+  row.style.background  = route.color + '22';
+  row.style.borderColor = route.color;
+
+  row.innerHTML = `
+    <div class="week-row__date">
+      <div class="week-row__dayname">${DAY_NAMES[date.getDay()]}</div>
+      <div class="week-row__daynum">${date.getDate()}</div>
+      <div class="week-row__month">${MONTH_SHORT[date.getMonth()]}</div>
+    </div>
+    <div class="week-row__city">
+      <div class="week-row__city-name">${cities}</div>
+      <div class="week-row__city-sub">${route.label} route · ${dayLabel}</div>
+    </div>
+    <div class="week-row__slots">
+      <div class="week-row__dots">${dotsHtml}</div>
+      ${tagHtml}
+    </div>
+  `;
+
+  row.addEventListener('click', () =>
+    openModal(date, { route, cities }, dateStr, avail, total, true)
+  );
+  return row;
+}
+
+document.getElementById('zip-btn').addEventListener('click', () => {
+  const zip = document.getElementById('zip-input').value.trim();
+  const result = document.getElementById('zip-result');
+  result.innerHTML = '';
+  result.className = 'zip-result zip-result--show';
+
+  if (zip.length !== 5 || !/^\d{5}$/.test(zip)) {
+    result.innerHTML = `<p style="color:#b03030;font-size:0.88rem">Please enter a valid 5-digit ZIP code.</p>`;
+    return;
+  }
+
+  const routeKeys = ZIP_MAP[zip];
+  const cityName  = ZIP_CITY[zip] || null;
+  _zipCity = cityName || '';
+
+  if (!routeKeys) {
+    // No match — show Text CTA
+    result.innerHTML = `
+      <div class="zip-no-match">
+        <div class="zip-no-match__text">
+          <strong>We don't have a scheduled route for ${zip} yet.</strong>
+          Text Sharp Mom directly and she'll let you know when service comes to your area — or arrange a drop-off.
+        </div>
+        <a href="sms:${PHONE}" class="zip-no-match__btn">📱 Text Sharp Mom</a>
+      </div>`;
+    return;
+  }
+
+  // Match — show result card + matching rows
+  const keys = routeKeys.split(',');
+  const matchLabel = keys.map(k => {
+    const r = ROUTES[k];
+    // Get next occurrence for display label
+    const d = getNextOccurrence(r.dow);
+    return r.label;
+  }).join(' & ');
+
+  const matchEl = document.createElement('div');
+  matchEl.className = 'zip-match';
+  matchEl.innerHTML = `
+    <div class="zip-match__label">Your area</div>
+    <div class="zip-match__text">${cityName || zip} is on the route <strong>${matchLabel}</strong></div>
+    <div class="zip-match__hint">Click a row below to check availability and book.</div>
+  `;
+  result.appendChild(matchEl);
+
+  // Build rows for each matched route
+  const rowsEl = document.createElement('div');
+  rowsEl.className = 'zip-rows';
+
+  keys.forEach(k => {
+    const route = ROUTES[k];
+    if (!route) return;
+    const date  = getNextOccurrence(route.dow);
+    const cities = getCitiesLabel(route, date);
+    rowsEl.appendChild(buildZipRow(date, route, cities));
+  });
+
+  result.appendChild(rowsEl);
+});
+
+// Allow Enter key in ZIP input
+document.getElementById('zip-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('zip-btn').click();
+});
+
+// ═══════════════════════════════════════════════════
+// WEEK NAVIGATION
+// ═══════════════════════════════════════════════════
+document.getElementById('prev-week').addEventListener('click', () => {
+  if (weekOffset > 0) { weekOffset--; renderWeek(); }
+});
+document.getElementById('next-week').addEventListener('click', () => {
+  weekOffset++;
+  renderWeek();
 });
 
 // ═══════════════════════════════════════════════════
@@ -994,8 +1231,7 @@ document.getElementById('next-month').addEventListener('click', () => {
 // ═══════════════════════════════════════════════════
 (async () => {
   await fetchSlotData();
-  renderLegend();
-  renderCalendar(currentYear, currentMonth);
+  renderWeek();
 })();
 </script>
 </body>

@@ -467,10 +467,10 @@
     <div class="notice" style="margin-top:32px">
       <div class="notice__icon">💡</div>
       <div>
-        Only have 1–2 items and don't meet the $80 minimum?
+        Order under $80 or want a drop-off instead?
         <a href="sms:+14083909940" style="color:var(--ink);font-weight:600">Text Sharp Mom</a>
-        to arrange a drop-off and she'll work it into her route.
-        Salon &amp; grooming clients have no minimum.
+        to arrange a drop-off appointment near Ponderosa Park in Sunnyvale.
+        Commercial, salon &amp; grooming clients have no minimum.
       </div>
     </div>
 
@@ -564,6 +564,10 @@
       <button class="btn-submit" id="btn-submit">
         📱 Send Booking Request via Text
       </button>
+      <p style="font-size:0.72rem;color:var(--ink-light);text-align:center;margin-top:10px;line-height:1.5;">
+        By texting Sharp Mom Co. you agree to receive automated service messages from this number.
+        Msg &amp; data rates may apply. Reply STOP to opt out.
+      </p>
       <p class="modal-note">
         This opens your Messages app with everything pre-filled.
         Hit Send — Sharp Mom will confirm your slot by text.
@@ -621,101 +625,141 @@
 // CONFIGURATION
 // ═══════════════════════════════════════════════════
 
-// Step 1: Create a Google Sheet with columns: Date (A), Booked (B)
-// Step 2: Deploy Google Apps Script as web app (see sheets-setup.js)
-// Step 3: Paste your web app URL here:
-const SHEETS_URL = ''; // e.g. 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzjhMVJA1wmubVMzpDLHh0CetWbhzypMMRAbkorwKDnjVRiYIS0QpuoVXIYDR8PG34xhg/exec';
 
-const TOTAL_SLOTS = 5;
 const PHONE = '+14083909940';
 
+// Slots vary by day type — weekdays 3, weekends 5
+const SLOTS_WEEKDAY = 3;
+const SLOTS_WEEKEND = 5;
+// TOTAL_SLOTS used by modal dots — set dynamically per cell below
+let TOTAL_SLOTS = 3;
+
 // ═══════════════════════════════════════════════════
-// ROUTE DEFINITIONS
+// ROUTE DEFINITIONS  (one per calendar color/label)
 // ═══════════════════════════════════════════════════
-const ROUTES = [
-  {
-    id: 'A',
-    label: 'North Peninsula',
-    subLabel: 'Menlo Park · Stanford · Palo Alto',
-    color: '#abe4e3',
-    w13: { day: 1, cities: 'Menlo Park / Stanford' },
-    w24: { day: 2, cities: 'Palo Alto' }
-  },
-  {
-    id: 'B',
-    label: 'Mid-Corridor',
-    subLabel: 'Los Altos · Mountain View',
-    color: '#D4832A',
-    w13: { day: 3, cities: 'Los Altos' },
-    w24: { day: 4, cities: 'Mountain View' }
-  },
-  {
-    id: 'C',
-    label: 'Central SV',
+const ROUTES = {
+  MON: {
+    id: 'MON', label: 'Monday',
     subLabel: 'Sunnyvale · Santa Clara',
+    color: '#abe4e3',
+    slots: SLOTS_WEEKDAY,
+    dow: 1   // 0=Sun … 6=Sat
+  },
+  TUE: {
+    id: 'TUE', label: 'Tuesday',
+    subLabel: 'Mountain View (N) · Los Altos',
+    color: '#D4832A',
+    slots: SLOTS_WEEKDAY,
+    dow: 2
+  },
+  WED: {
+    id: 'WED', label: 'Wednesday',
+    subLabel: 'Cupertino · S. Sunnyvale',
+    color: '#b5cfe8',
+    slots: SLOTS_WEEKDAY,
+    dow: 3
+  },
+  THU: {
+    id: 'THU', label: 'Thursday',
+    subLabel: 'San Jose (rotating neighborhoods)',
+    color: '#c8b4e8',
+    slots: SLOTS_WEEKDAY,
+    dow: 4
+  },
+  FRI: {
+    id: 'FRI', label: 'Friday',
+    subLabel: 'Premium — rotating city',
+    color: '#f6c87a',
+    slots: SLOTS_WEEKDAY,
+    dow: 5
+  },
+  SAT: {
+    id: 'SAT', label: 'Saturday',
+    subLabel: 'Palo Alto · Los Altos Hills · Los Altos',
     color: '#f6bdd3',
-    w13: { day: 5, cities: 'Sunnyvale' },
-    w24: { day: 6, cities: 'Santa Clara' }
+    slots: SLOTS_WEEKEND,
+    dow: 6
   },
-  {
-    id: 'D',
-    label: 'San Jose Core',
-    subLabel: 'West SJ · Willow Glen',
-    color: '#a4bbd9',
-    w13: { day: 6, cities: 'W. San Jose / Willow Glen' },
-    w24: { day: 0, cities: 'W. San Jose / Willow Glen' }
-  },
-  {
-    id: 'E',
-    label: 'South Bay Hills',
-    subLabel: 'Campbell · Saratoga · Los Gatos',
+  SUN: {
+    id: 'SUN', label: 'Sunday',
+    subLabel: 'Mtn View (S) · Saratoga · Monte Sereno · Los Gatos · Campbell',
     color: '#e7b4c8',
-    w13: { day: 0, cities: 'Campbell / Saratoga / Los Gatos' },
-    w24: { day: 1, cities: 'Campbell / Saratoga / Los Gatos' }
+    slots: SLOTS_WEEKEND,
+    dow: 0
   }
-];
+};
+
+// Friday monthly rotation: week-of-month → city label
+const FRI_ROTATION = {
+  1: 'Palo Alto (north)',
+  2: 'Mountain View (north · 94043)',
+  3: 'Los Gatos · Monte Sereno',
+  4: 'Los Altos Hills · Los Altos'
+};
+
+// Thursday monthly rotation: week-of-month → neighborhood
+const THU_ROTATION = {
+  1: 'San Jose — Willow Glen',
+  2: 'San Jose — Almaden Valley',
+  3: 'San Jose — Silver Creek / Evergreen',
+  4: 'San Jose — Cambrian / W. San Jose'
+};
 
 // ═══════════════════════════════════════════════════
 // SLOT DATA  (keyed by 'YYYY-MM-DD' → booked count)
 // ═══════════════════════════════════════════════════
-let slotData = {}; // populated from Google Sheets
+let slotData = {};
 
 async function fetchSlotData() {
   if (!SHEETS_URL) return;
   try {
     const res = await fetch(SHEETS_URL);
-    slotData = await res.json(); // { 'YYYY-MM-DD': bookedCount }
+    slotData = await res.json();
   } catch (e) {
     console.warn('Could not load slot data from Google Sheets:', e);
   }
 }
 
+function slotsForRoute(route) {
+  return route.slots;
+}
 function bookedCount(dateStr) {
   return slotData[dateStr] || 0;
 }
-function availableSlots(dateStr) {
-  return Math.max(0, TOTAL_SLOTS - bookedCount(dateStr));
+function availableSlots(dateStr, route) {
+  return Math.max(0, slotsForRoute(route) - bookedCount(dateStr));
 }
 
 // ═══════════════════════════════════════════════════
 // SERVICE DAY LOGIC
 // ═══════════════════════════════════════════════════
+
+// Returns week-of-month (1–4) for a given day number
+function weekOfMonth(year, month, day) {
+  return Math.ceil(day / 7);
+}
+
+function getCitiesLabel(route, year, month, day) {
+  const wk = weekOfMonth(year, month, day);
+  if (route.id === 'FRI') return FRI_ROTATION[wk] || FRI_ROTATION[4];
+  if (route.id === 'THU') return THU_ROTATION[wk] || THU_ROTATION[4];
+  return route.subLabel;
+}
+
 function getServiceDaysForMonth(year, month) {
   const result = [];
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const counts = [0,0,0,0,0,0,0];
 
   for (let d = 1; d <= daysInMonth; d++) {
     const dow = new Date(year, month, d).getDay();
-    counts[dow]++;
-    const occ = counts[dow];
-
-    for (const route of ROUTES) {
-      if (route.w13.day === dow && (occ === 1 || occ === 3)) {
-        result.push({ date: d, route, cities: route.w13.cities });
-      }
-      if (route.w24.day === dow && (occ === 2 || occ === 4)) {
-        result.push({ date: d, route, cities: route.w24.cities });
+    for (const route of Object.values(ROUTES)) {
+      if (route.dow === dow) {
+        result.push({
+          date:   d,
+          route,
+          cities: getCitiesLabel(route, year, month, d)
+        });
       }
     }
   }
@@ -737,7 +781,7 @@ let currentMonth = new Date().getMonth();
 
 function renderLegend() {
   const el = document.getElementById('legend');
-  el.innerHTML = ROUTES.map(r => `
+  el.innerHTML = Object.values(ROUTES).map(r => `
     <div class="legend-item">
       <span class="legend-dot" style="background:${r.color}"></span>
       <span>${r.label} <span style="opacity:.6;font-weight:400">— ${r.subLabel}</span></span>
@@ -774,8 +818,9 @@ function renderCalendar(year, month) {
   for (let d = 1; d <= daysInMonth; d++) {
     const svc      = lookup[d];
     const dateStr  = toDateStr(year, month, d);
-    const avail    = availableSlots(dateStr);
-    const booked   = TOTAL_SLOTS - avail;
+    const avail    = svc ? availableSlots(dateStr, svc.route) : 0;
+    const total    = svc ? slotsForRoute(svc.route) : SLOTS_WEEKDAY;
+    const booked   = total - avail;
     const isToday  = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
     const isPast   = new Date(year, month, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
@@ -792,7 +837,7 @@ function renderCalendar(year, month) {
         <div class="cal-cell__num">${isToday ? `<span style="background:var(--ink);color:var(--white);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.78rem">${d}</span>` : d}</div>
         <div class="cal-cell__city">${svc.cities}</div>
         <div class="cal-cell__slots">
-          ${Array.from({length: TOTAL_SLOTS}, (_,i) =>
+          ${Array.from({length: total}, (_,i) =>
             `<div class="slot-dot ${i < avail ? 'slot-dot--available' : 'slot-dot--booked'}"
               style="${i < avail ? `background:${svc.route.color}` : ''}"></div>`
           ).join('')}
@@ -801,7 +846,7 @@ function renderCalendar(year, month) {
                  : `<div class="cal-cell__tag">${avail} open</div>`}
       `;
 
-      cell.addEventListener('click', () => openModal(d, month, year, svc, dateStr, avail));
+      cell.addEventListener('click', () => openModal(d, month, year, svc, dateStr, avail, total));
 
     } else {
       // Non-service or past service day
@@ -818,8 +863,8 @@ function renderCalendar(year, month) {
 // ═══════════════════════════════════════════════════
 let _modalDate = '', _modalCities = '';
 
-function openModal(day, month, year, svc, dateStr, avail) {
-  const booked = TOTAL_SLOTS - avail;
+function openModal(day, month, year, svc, dateStr, avail, total) {
+  const booked = total - avail;
   const isFull = avail === 0;
   const dateLabel = new Date(year, month, day).toLocaleDateString('en-US',
     { weekday:'long', month:'long', day:'numeric' });
@@ -836,14 +881,14 @@ function openModal(day, month, year, svc, dateStr, avail) {
 
   // Dots
   const dotsEl = document.getElementById('modal-dots');
-  dotsEl.innerHTML = Array.from({length: TOTAL_SLOTS}, (_,i) =>
+  dotsEl.innerHTML = Array.from({length: total}, (_,i) =>
     `<div class="modal__dot ${i < avail ? '' : 'modal__dot--booked'}"
       style="${i < avail ? `background:${svc.route.color}` : ''}"></div>`
   ).join('');
 
   // Slot text
   document.getElementById('modal-slot-text').textContent =
-    isFull ? 'Fully booked' : `${avail} of ${TOTAL_SLOTS} slots available`;
+    isFull ? 'Fully booked' : `${avail} of ${total} slots available`;
   document.getElementById('modal-slot-sub').textContent =
     isFull ? 'Text Sharp Mom to join the waitlist'
            : `${booked} slot${booked !== 1 ? 's' : ''} already requested`;
@@ -909,14 +954,18 @@ document.getElementById('btn-submit').addEventListener('click', () => {
     `Address: ${address}`,
     `Services: ${services}`,
     `Items: ${items}`,
-    access ? `Drop-off/Access: ${access}` : null,
-    notes  ? `Notes: ${notes}`            : null,
-  ].filter(Boolean).join('\n');
+  ];
 
-  // iOS uses & as separator; Android uses ?
-  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const sep = isIOS ? '&' : '?';
-  const smsLink = `sms:${PHONE}${sep}body=${encodeURIComponent(lines)}`;
+  if (access) lines.push(`Drop-off/Access: ${access}`);
+  if (notes) lines.push(`Notes: ${notes}`);
+
+  const messageBody = lines.join('\n');
+
+  // Detect Apple platforms (macOS, iOS, iPadOS) to determine query separator
+  const isApple = /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const sep = isApple ? '&' : '?';
+  const smsLink = `sms:${PHONE}${sep}body=${encodeURIComponent(messageBody)}`;
 
   // Use anchor click — more reliable than window.location.href for SMS URIs
   const a = document.createElement('a');
@@ -926,38 +975,46 @@ document.getElementById('btn-submit').addEventListener('click', () => {
   document.body.removeChild(a);
 
   // Show copy-fallback in case body doesn't pre-fill on the device
-  showFallback(lines);
+  showFallback(messageBody);
 });
 
 function showFallback(msg) {
-  // Remove any existing fallback
   const old = document.getElementById('sms-fallback');
   if (old) old.remove();
 
   const box = document.createElement('div');
   box.id = 'sms-fallback';
-  box.style.cssText = `
-    margin-top:16px; padding:14px 16px;
-    background:#f5f5f5; border-radius:10px;
-    border:1px solid #ddd; font-size:0.82rem;
-    color:#444; line-height:1.6;
-  `;
-  box.innerHTML = `
-    <div style="font-weight:700;margin-bottom:8px;color:#1a1a1a">
-      📋 If the message didn't pre-fill, copy it below:
-    </div>
-    <pre style="white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:0.8rem;margin:0 0 10px">${msg}</pre>
-    <button onclick="navigator.clipboard.writeText(${JSON.stringify(msg)}).then(()=>this.textContent='✅ Copied!')"
-      style="padding:7px 16px;border-radius:50px;border:1.5px solid #1a1a1a;background:#1a1a1a;color:#fff;font-size:0.82rem;font-weight:600;cursor:pointer">
-      Copy message
-    </button>
-    <span style="margin-left:10px;font-size:0.78rem;color:#888">
-      Then paste it into a text to ${PHONE}
-    </span>
-  `;
+  box.style.cssText = 'margin-top:16px;padding:14px 16px;background:#f5f5f5;border-radius:10px;border:1px solid #ddd;font-size:0.82rem;color:#444;line-height:1.6;';
+
+  const label = document.createElement('div');
+  label.style.cssText = 'font-weight:700;margin-bottom:8px;color:#1a1a1a';
+  label.textContent = 'If the message did not pre-fill, copy it below:';
+
+  const pre = document.createElement('pre');
+  pre.style.cssText = 'white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:0.8rem;margin:0 0 10px';
+  pre.textContent = msg;
+
+  const copyBtn = document.createElement('button');
+  copyBtn.style.cssText = 'padding:7px 16px;border-radius:50px;border:1.5px solid #1a1a1a;background:#1a1a1a;color:#fff;font-size:0.82rem;font-weight:600;cursor:pointer';
+  copyBtn.textContent = 'Copy message';
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(msg).then(() => {
+      copyBtn.textContent = 'Copied!';
+    });
+  });
+
+  const hint = document.createElement('span');
+  hint.style.cssText = 'margin-left:10px;font-size:0.78rem;color:#888';
+  hint.textContent = 'Then paste it into a text to ' + PHONE;
+
+  box.appendChild(label);
+  box.appendChild(pre);
+  box.appendChild(copyBtn);
+  box.appendChild(hint);
+
   document.getElementById('modal-form').appendChild(box);
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-});
+}
 
 // ═══════════════════════════════════════════════════
 // MONTH NAV
