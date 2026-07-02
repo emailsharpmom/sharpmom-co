@@ -1227,12 +1227,10 @@ document.getElementById('next-week').addEventListener('click', () => {
 });
 
 // ═══════════════════════════════════════════════════
-// INIT
+// INIT — render immediately, then refresh once slot data loads
 // ═══════════════════════════════════════════════════
-(async () => {
-  await fetchSlotData();
-  renderWeek();
-})();
+renderWeek(); // paint grid instantly with 0 booked (all slots open)
+fetchSlotData().then(() => renderWeek()); // silent update once sheet responds
 </script>
 </body>
 </html>
